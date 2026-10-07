@@ -102,7 +102,6 @@ const SKILLS_DATA: Skill[] = [
 export const SkillSelector: React.FC = () => {
   // Skill 02 is "Motion Graphics" (index 1) default
   const [activeSkill, setActiveSkill] = useState<Skill>(SKILLS_DATA[1]);
-  const [activeIdx, setActiveIdx] = useState<number>(1);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -125,13 +124,7 @@ export const SkillSelector: React.FC = () => {
         const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
         const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
 
-        setActiveIdx((prevIdx) => {
-          if (prevIdx !== clampedIndex) {
-            setActiveSkill(SKILLS_DATA[clampedIndex]);
-            return clampedIndex;
-          }
-          return prevIdx;
-        });
+        setActiveSkill(SKILLS_DATA[clampedIndex]);
       },
     });
 
@@ -197,19 +190,6 @@ export const SkillSelector: React.FC = () => {
             </h2>
           </div>
 
-          {/* Progress Tracker Pill */}
-          <div className="flex items-center space-x-3 bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-full self-start md:self-auto">
-            <span className="text-xs font-mono text-neutral-400">SKILL</span>
-            <span className="text-sm font-mono font-bold text-[#52C3C1]">
-              {activeSkill.number} / 08
-            </span>
-            <div className="w-20 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#52C3C1] transition-all duration-300"
-                style={{ width: `${((activeIdx + 1) / SKILLS_DATA.length) * 100}%` }}
-              />
-            </div>
-          </div>
         </div>
 
         {/* Main Grid Layout: Center Showcase + Surrounding Skill Cards */}
@@ -217,14 +197,13 @@ export const SkillSelector: React.FC = () => {
           
           {/* Left Column: Cards 01 - 04 */}
           <div className="grid grid-cols-2 gap-3 lg:col-span-4">
-            {SKILLS_DATA.slice(0, 4).map((skill, index) => {
+            {SKILLS_DATA.slice(0, 4).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
                 <div
                   key={skill.id}
                   onMouseEnter={() => {
                     setActiveSkill(skill);
-                    setActiveIdx(index);
                   }}
                   className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
@@ -340,15 +319,13 @@ export const SkillSelector: React.FC = () => {
 
           {/* Right Column: Cards 05 - 08 */}
           <div className="grid grid-cols-2 gap-3 lg:col-span-4">
-            {SKILLS_DATA.slice(4, 8).map((skill, index) => {
-              const actualIndex = index + 4;
+            {SKILLS_DATA.slice(4, 8).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
                 <div
                   key={skill.id}
                   onMouseEnter={() => {
                     setActiveSkill(skill);
-                    setActiveIdx(actualIndex);
                   }}
                   className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
