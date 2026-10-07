@@ -1,51 +1,152 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const About: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const polaroidRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef = useRef<HTMLParagraphElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      // Entrance timeline for the card & contents
+      const mainTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: '+=100%',
+          pin: true,
+          scrub: 1,
+        },
+      });
+
+      // Card elevation entrance
+      mainTl.fromTo(
+        cardRef.current,
+        { y: 60, opacity: 0, scale: 0.97 },
+        { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power3.out' }
+      );
+
+      // Polaroid swing-in
+      mainTl.fromTo(
+        polaroidRef.current,
+        { y: 50, rotate: -8, opacity: 0 },
+        { y: 0, rotate: -3, opacity: 1, duration: 0.9, ease: 'back.out(1.4)' },
+        '-=0.7'
+      );
+
+      // Word-by-word reveal for the heading
+      const words = headingRef.current?.querySelectorAll('.reveal-word');
+      if (words && words.length > 0) {
+        mainTl.fromTo(
+          words,
+          { y: 24, opacity: 0, filter: 'blur(4px)' },
+          {
+            y: 0,
+            opacity: 1,
+            filter: 'blur(0px)',
+            duration: 0.5,
+            stagger: 0.05,
+            ease: 'power2.out',
+          },
+          '-=0.6'
+        );
+      }
+
+      // Paragraph fade-in
+      mainTl.fromTo(
+        bodyRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
+        '-=0.3'
+      );
+
+      // Button scale bounce
+      mainTl.fromTo(
+        buttonRef.current,
+        { scale: 0.85, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' },
+        '-=0.4'
+      );
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section id="about" data-scroll-section className="py-20 px-4 md:px-8 bg-[#111111] text-white flex justify-center items-center min-h-screen">
-      {/* Container: Dark charcoal rounded card background with generous padding */}
+    <section
+      id="about"
+      ref={sectionRef}
+      className="relative py-24 px-4 md:px-8 bg-[#111111] text-white flex justify-center items-center min-h-screen overflow-hidden"
+    >
+      {/* Main Container Card */}
       <div
-        data-scroll-content
-        className="w-full max-w-full bg-[#1a1a1a] rounded-2xl p-8 md:p-14 shadow-2xl border border-zinc-800 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center"
+        ref={cardRef}
+        className="relative w-full max-w-6xl bg-[#1a1a1a] rounded-3xl p-8 md:p-14 shadow-2xl border border-zinc-800/80 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center z-10"
       >
-        {/* Left Column (Media): Polaroid Frame */}
-        <div className="flex justify-center items-center">
+        {/* Left Column: Polaroid Frame */}
+        <div className="lg:col-span-5 flex justify-center items-center">
           <div
-            className="bg-white text-zinc-900 p-4 pb-6 rounded-sm shadow-xl transform -rotate-3 transition-transform hover:rotate-0 duration-500 max-w-sm w-full"
+            ref={polaroidRef}
+            className="group bg-white text-zinc-900 p-4 pb-6 rounded-sm shadow-2xl transform transition-all duration-500 hover:rotate-0 hover:scale-[1.03] max-w-sm w-full cursor-pointer"
           >
-            <div className="aspect-4/5 overflow-hidden bg-zinc-900 rounded-xs mb-4">
+            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 rounded-xs mb-4 relative">
               <img
                 src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80"
                 alt="Lugene Cyberpunk Gamer/Designer"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <p className="text-center font-sans text-sm tracking-wide text-zinc-700 font-medium">
+            <p className="text-center font-mono text-xs md:text-sm tracking-wider text-zinc-700 font-semibold uppercase">
               lugene.creatives
             </p>
           </div>
         </div>
 
-        {/* Right Column (Content) */}
-        <div className="flex flex-col justify-center space-y-6">
-          {/* Main Heading */}
+        {/* Right Column: Content */}
+        <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
+          {/* Main Heading with split typography */}
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#3ec1b0] leading-tight font-sans"
+            ref={headingRef}
+            className="text-3xl sm:text-4xl lg:text-5xl leading-[1.2] font-sans font-normal text-zinc-200 tracking-tight"
           >
-            What i do as a multimedia designer? <span className="italic font-normal text-teal-200/90">*clears throat*</span> Allow me! to enlighten you.
+            <span className="inline-block reveal-word">What</span>{' '}
+            <span className="inline-block reveal-word">i</span>{' '}
+            <span className="inline-block reveal-word">do</span>{' '}
+            <span className="inline-block reveal-word">as</span>{' '}
+            <span className="inline-block reveal-word">a</span>{' '}
+            <span className="inline-block reveal-word font-black text-[#3ec1b0]">
+              multimedia designer?
+            </span>{' '}
+            <br className="hidden sm:inline" />
+            <span className="inline-block reveal-word italic font-serif text-teal-300/80 font-light text-2xl sm:text-3xl lg:text-4xl mr-2">
+              clears throat
+            </span>{' '}
+            <span className="inline-block reveal-word font-black text-[#3ec1b0] uppercase tracking-wide">
+              Allow me!
+            </span>{' '}
+            <span className="inline-block reveal-word">to</span>{' '}
+            <span className="inline-block reveal-word">enlighten</span>{' '}
+            <span className="inline-block reveal-word">you.</span>
           </h2>
 
           {/* Body Copy */}
           <p
-            className="text-zinc-300 text-base md:text-lg leading-relaxed font-sans font-normal"
+            ref={bodyRef}
+            className="text-zinc-300 text-base md:text-lg leading-relaxed font-sans font-light"
           >
-            Hi! I'm Lugene Serandon, a 25-year-old multimedia artist with nearly 6 years of experience. I'm passionate about creating impactful designs and constantly improving my skills. Outside of work, I'm a gamer, movie buff, and music lover. I enjoy drawing and experimenting with new techniques. I believe in learning from setbacks and always pushing my creative limits.
+            Hi! I'm <strong className="font-semibold text-white">Lugene Serandon</strong>, a 25-year-old multimedia artist with nearly 6 years of experience. I'm passionate about creating impactful designs and constantly improving my skills. Outside of work, I'm a gamer, movie buff, and music lover. I enjoy drawing and experimenting with new techniques. I believe in learning from setbacks and always pushing my creative limits.
           </p>
 
           {/* Call to Action Button */}
-          <div className="pt-2">
+          <div ref={buttonRef} className="pt-2">
             <button
-              className="px-6 py-2.5 rounded-full border border-[#3ec1b0] text-[#3ec1b0] hover:bg-[#3ec1b0]/10 transition-all duration-300 text-sm font-medium tracking-wide uppercase cursor-pointer"
+              className="px-7 py-3 rounded-full border border-[#3ec1b0] text-[#3ec1b0] font-mono text-xs md:text-sm font-bold tracking-widest uppercase cursor-pointer transition-all duration-300 hover:bg-[#3ec1b0] hover:text-[#111111] hover:shadow-[0_0_20px_rgba(62,193,176,0.3)] active:scale-95"
             >
               the creation
             </button>

@@ -31,9 +31,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="flex gap-6">
-          <a href="#" className="hover:text-primary transition-colors">TWITTER</a>
           <a href="#" className="hover:text-primary transition-colors">LINKEDIN</a>
-          <a href="#" className="hover:text-primary transition-colors">DRIBBBLE</a>
           <a href="#" className="hover:text-primary transition-colors">INSTAGRAM</a>
         </div>
 

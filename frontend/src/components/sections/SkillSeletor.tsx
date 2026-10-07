@@ -189,16 +189,16 @@ export const SkillSelector: React.FC = () => {
 
       <div data-scroll-content className="max-w-6xl w-full mx-auto relative z-10">
         {/* Header Title with Scroll Tracker */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-neutral-800 gap-4">
-          <div>
+        <div className="mb-10 flex justify-center border-b border-neutral-800 pb-6 text-center">
+          <div className="w-full">
           
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mt-3 font-header">
-              SKILL <span className="text-[#52C3C1]">SELECTOR</span>
+            <h2 className="mt-3 text-center font-header text-3xl font-black uppercase tracking-tight text-white md:text-5xl">
+             <span className="text-[#52C3C1]"> SELECT YOUR POWER UP . . . . </span>
             </h2>
           </div>
 
           {/* Progress Tracker Pill */}
-          <div className="flex items-center space-x-3 bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-full self-start md:self-auto">
+          {/* <div className="flex items-center space-x-3 bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-full self-start md:self-auto">
             <span className="text-xs font-mono text-neutral-400">SKILL</span>
             <span className="text-sm font-mono font-bold text-[#52C3C1]">
               {activeSkill.number} / 08
@@ -209,14 +209,14 @@ export const SkillSelector: React.FC = () => {
                 style={{ width: `${((activeIdx + 1) / SKILLS_DATA.length) * 100}%` }}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Main Grid Layout: Center Showcase + Surrounding Skill Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left Column: Cards 01 - 04 */}
-          <div className="lg:col-span-3 flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3 lg:col-span-4">
             {SKILLS_DATA.slice(0, 4).map((skill, index) => {
               const isActive = activeSkill.id === skill.id;
               return (
@@ -226,17 +226,26 @@ export const SkillSelector: React.FC = () => {
                     setActiveSkill(skill);
                     setActiveIdx(index);
                   }}
-                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex items-center justify-between group ${
+                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'
                   }`}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900">
+                    <img
+                      src={skill.image}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  </div>
+                  <div className="flex min-w-0 items-center space-x-2">
                     <span className={`font-mono text-xs font-bold ${isActive ? 'text-[#52C3C1]' : 'text-neutral-500'}`}>
                       [{skill.number}]
                     </span>
-                    <h3 className={`text-sm font-bold tracking-wide transition-colors ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
+                    <h3 className={`break-words text-xs font-bold tracking-wide transition-colors sm:text-sm ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
                       {skill.title}
                     </h3>
                   </div>
@@ -253,7 +262,7 @@ export const SkillSelector: React.FC = () => {
           </div>
 
           {/* Center Column: Dynamic Showcase Card (Active Skill) */}
-          <div ref={cardRef} className="lg:col-span-6 bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col">
+          <div ref={cardRef} className="lg:col-span-4 bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col">
             {/* Banner Preview Image */}
             <div className="relative aspect-16/9 rounded-xl overflow-hidden mb-6 border border-neutral-800 bg-neutral-900">
               <img
@@ -330,7 +339,7 @@ export const SkillSelector: React.FC = () => {
           </div>
 
           {/* Right Column: Cards 05 - 08 */}
-          <div className="lg:col-span-3 flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3 lg:col-span-4">
             {SKILLS_DATA.slice(4, 8).map((skill, index) => {
               const actualIndex = index + 4;
               const isActive = activeSkill.id === skill.id;
@@ -341,17 +350,26 @@ export const SkillSelector: React.FC = () => {
                     setActiveSkill(skill);
                     setActiveIdx(actualIndex);
                   }}
-                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex items-center justify-between group ${
+                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] -translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'
                   }`}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900">
+                    <img
+                      src={skill.image}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  </div>
+                  <div className="flex min-w-0 items-center space-x-2">
                     <span className={`font-mono text-xs font-bold ${isActive ? 'text-[#52C3C1]' : 'text-neutral-500'}`}>
                       [{skill.number}]
                     </span>
-                    <h3 className={`text-sm font-bold tracking-wide transition-colors ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
+                    <h3 className={`break-words text-xs font-bold tracking-wide transition-colors sm:text-sm ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
                       {skill.title}
                     </h3>
                   </div>

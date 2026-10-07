@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>L-DESIGN</title>
+    <script>
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+
+      const resetScrollPosition = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      };
+
+      resetScrollPosition();
+      window.addEventListener('pageshow', resetScrollPosition);
+    </script>
   </head>
   <body>
     <div id="root"></div>

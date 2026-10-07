@@ -1,10 +1,26 @@
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export const TemporaryLoader = () => {
   const loaderRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
+
+  useLayoutEffect(() => {
+    if (!isVisible) return;
+
+    const elements = [document.documentElement, document.body];
+    const elementsToReset = elements.filter(
+      (element) => !element.classList.contains('scrollbar-none')
+    );
+    elements.forEach((element) => element.classList.add('scrollbar-none'));
+
+    return () => {
+      elementsToReset.forEach((element) =>
+        element.classList.remove('scrollbar-none')
+      );
+    };
+  }, [isVisible]);
 
   useGSAP(() => {
     const loader = loaderRef.current;
@@ -49,7 +65,7 @@ export const TemporaryLoader = () => {
   return (
     <div
       ref={loaderRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg-dark"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg-dark "
       aria-live="polite"
       aria-label="Loading portfolio"
     >

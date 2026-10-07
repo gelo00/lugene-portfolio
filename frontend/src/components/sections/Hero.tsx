@@ -6,22 +6,6 @@ const LETTERS = ['L', 'U', 'G', 'E', 'N', 'E'];
 export const Hero: React.FC = () => {
   const lettersRef = useRef<(HTMLSpanElement | null)[]>([]);
 
-  // Letter Hover Drop/Bounce Effect
-  const handleLetterHover = (index: number) => {
-    const el = lettersRef.current[index];
-    if (!el) return;
-
-    gsap.to(el, {
-      y: -100,
-      scale: 1.5,
-      rotation: gsap.utils.random(-10, 10),
-      color: index % 2 === 0 ? '#52C3C1' : '#E94E77',
-      duration: 0.25,
-      ease: 'power2.out',
-      yoyo: true,
-      repeat: 1,
-    });
-  };
 
   return (
     <section
@@ -37,7 +21,6 @@ export const Hero: React.FC = () => {
               lettersRef.current[idx] = el;
             }}
             data-hero-letter
-            onMouseEnter={() => handleLetterHover(idx)}
             className="inline-block transition-colors duration-300 cursor-pointer drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
           >
             {letter}

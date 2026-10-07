@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -10,11 +10,28 @@ import { Footer } from './components/layout/Footer';
 import SkillSelector from './components/sections/SkillSeletor';
 import ShowreelSection from './components/sections/ShowreelSection';
 import { TemporaryLoader } from './components/ui/TemporaryLoader';
+import CustomCursor from './components/ui/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const App: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const refreshScrollTriggers = () => {
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+        ScrollTrigger.update();
+      });
+    };
+
+    window.addEventListener('pageshow', refreshScrollTriggers);
+    refreshScrollTriggers();
+
+    return () => {
+      window.removeEventListener('pageshow', refreshScrollTriggers);
+    };
+  }, []);
 
   useGSAP(() => {
     const page = pageRef.current;
@@ -109,7 +126,7 @@ export const App: React.FC = () => {
 
       <div ref={pageRef} className="relative min-h-screen bg-bg-dark text-text-primary selection:bg-primary selection:text-black font-body overflow-x-hidden">
         {/* Interactive Custom Cursor & Cyberpunk Glow Background */}
-  
+        <CustomCursor/>
         {/* Main Navigation Header */}
         <Header />
 
