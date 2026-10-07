@@ -198,7 +198,7 @@ export const SkillSelector: React.FC = () => {
           </div>
 
           {/* Progress Tracker Pill */}
-          {/* <div className="flex items-center space-x-3 bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-full self-start md:self-auto">
+          <div className="flex items-center space-x-3 bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-full self-start md:self-auto">
             <span className="text-xs font-mono text-neutral-400">SKILL</span>
             <span className="text-sm font-mono font-bold text-[#52C3C1]">
               {activeSkill.number} / 08
@@ -209,7 +209,7 @@ export const SkillSelector: React.FC = () => {
                 style={{ width: `${((activeIdx + 1) / SKILLS_DATA.length) * 100}%` }}
               />
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Main Grid Layout: Center Showcase + Surrounding Skill Cards */}

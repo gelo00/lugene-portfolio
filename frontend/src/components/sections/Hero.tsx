@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { gsap } from 'gsap';
 
 const LETTERS = ['L', 'U', 'G', 'E', 'N', 'E'];
 
