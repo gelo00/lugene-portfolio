@@ -127,9 +127,7 @@ export const App: React.FC = () => {
       <div ref={pageRef} className="relative min-h-screen bg-bg-dark text-text-primary selection:bg-primary selection:text-black font-body overflow-x-hidden">
         {/* Interactive Custom Cursor & Cyberpunk Glow Background */}
         <CustomCursor/>
-        {/* Main Navigation Header */}
         <Header />
-
       {/* Main Content Sections */}
       <main className="relative z-10">
         {/* Section content transitions are coordinated here for a consistent page flow. */}

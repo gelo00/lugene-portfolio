@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
@@ -20,8 +21,39 @@ export const Header: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('');
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  
+  const headerRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Transition: Hide Header when reaching the Footer section
+  useGSAP(() => {
+    const footerEl = document.getElementById('footer');
+    if (!footerEl || !navRef.current) return;
+
+    ScrollTrigger.create({
+      trigger: footerEl,
+      start: 'top 90%', // Triggers when top of footer reaches 85% viewport
+      onEnter: () => {
+        setIsMenuOpen(false); // Close dropdown menu if open
+        gsap.to(navRef.current, {
+          yPercent: -200,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.inOut',
+        });
+      },
+      onLeaveBack: () => {
+        gsap.to(navRef.current, {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.4,
+          ease: 'power2.out',
+        });
+      },
+    });
+  }, { scope: headerRef });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,8 +133,12 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 flex justify-center px-6 py-4 pointer-events-none font-mono">
+    <header
+      ref={headerRef}
+      className="fixed top-0 inset-x-0 z-50 flex justify-center px-6 py-4 pointer-events-none font-mono"
+    >
       <nav
+        ref={navRef}
         className={`pointer-events-auto w-full max-w-6xl px-6 py-2.5 rounded-full flex items-center justify-between transition-all duration-500 ${
           isScrolled
             ? 'bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
@@ -138,7 +174,6 @@ export const Header: React.FC = () => {
             }`}
           >
             MENU
-           
           </button>
           {isMenuOpen && (
             <div

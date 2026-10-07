@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 const ShowreelSection: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const videoCardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [playbackError, setPlaybackError] = useState<string | null>(null);
@@ -26,17 +27,39 @@ const ShowreelSection: React.FC = () => {
     videoRef.current?.pause();
   };
 
+  // Option 1: Scale-Up Expansion Transition
   useGSAP(() => {
-    if (!containerRef.current || !panelRef.current) return;
+    if (!containerRef.current || !panelRef.current || !videoCardRef.current) return;
 
     const revealTimeline = gsap.timeline();
+
     revealTimeline
+      // 1. Unveil the section panel
       .fromTo(
         panelRef.current,
-        { yPercent: 100 },
-        { yPercent: 0, duration: 1, ease: 'none' }
+        { yPercent: 100, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1, ease: 'none' }
       )
+      // 2. Expand video card from compact card to full-screen viewport scale
+      .fromTo(
+        videoCardRef.current,
+        {
+          scale: 0.82,
+          borderRadius: '1.5rem',
+          filter: 'blur(8px)',
+        },
+        {
+          scale: 1,
+          borderRadius: '0.75rem',
+          filter: 'blur(0px)',
+          duration: 1.2,
+          ease: 'power2.out',
+        },
+        '-=0.5'
+      )
+      // 3. Trigger video playback once expanded
       .call(startPlayback)
+      // 4. Hold section in view briefly while video plays
       .to(panelRef.current, { yPercent: 0, duration: 1, ease: 'none' });
 
     ScrollTrigger.create({
@@ -45,10 +68,15 @@ const ShowreelSection: React.FC = () => {
       start: 'top top',
       end: '+=200%',
       pin: true,
-      scrub: 1.5,
+      scrub: 1.2,
+      invalidateOnRefresh: true,
       animation: revealTimeline,
       onEnterBack: startPlayback,
-      onLeaveBack: pausePlayback,
+      onLeaveBack: () => {
+        pausePlayback();
+        // Reset scale state when scrolling back up above section
+        gsap.set(videoCardRef.current, { scale: 0.82, borderRadius: '1.5rem' });
+      },
     });
   }, { scope: containerRef });
 
@@ -63,7 +91,12 @@ const ShowreelSection: React.FC = () => {
         className="relative flex h-full w-full flex-col items-center justify-center bg-[#111111] px-6 py-12 text-white shadow-[0_-20px_50px_rgba(0,0,0,0.9)] md:px-16"
       >
         <div className="w-full max-w-7xl mx-auto flex flex-col items-center">
-          <div className="relative w-full rounded-2xl overflow-hidden bg-black border border-neutral-800 shadow-2xl group">
+          
+          {/* Scale-Up Video Container Card */}
+          <div
+            ref={videoCardRef}
+            className="relative w-full rounded-2xl overflow-hidden bg-black border border-neutral-800 shadow-2xl group transition-all duration-300"
+          >
             <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden max-h-[65vh]">
               <video
                 ref={videoRef}

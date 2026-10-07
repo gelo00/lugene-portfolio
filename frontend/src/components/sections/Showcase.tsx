@@ -57,6 +57,7 @@ const PORTFOLIO_PROJECTS: ProjectItem[] = [
 export const Showcase: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -66,60 +67,93 @@ export const Showcase: React.FC = () => {
   const dragStartX = useRef<number>(0);
   const dragCurrentX = useRef<number>(0);
 
+  // Shared Element Morph Entrance & Horizontal Scroll Transition
   useGSAP(() => {
     if (!sectionRef.current || !trackRef.current) return;
 
     const cards = gsap.utils.toArray<HTMLElement>('.showcase-card');
     const totalCards = cards.length;
 
-    scrollTriggerRef.current = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: () => `+=${totalCards * 100}%`,
-      pin: true,
-      scrub: 0.6,
-      onUpdate: (self) => {
-        const progress = self.progress * (totalCards - 1);
-        const currentIndex = Math.min(Math.max(Math.round(progress), 0), totalCards - 1);
-        setActiveIndex(currentIndex);
+    // Master ScrollTrigger handling Pinning + Morph Sequence
+    const mainTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: () => `+=${totalCards * 100}%`,
+        pin: true,
+        scrub: 0.6,
+        onUpdate: (self) => {
+          const progress = self.progress * (totalCards - 1);
+          const currentIndex = Math.min(Math.max(Math.round(progress), 0), totalCards - 1);
+          setActiveIndex(currentIndex);
 
-        const xPercent = -((self.progress * (totalCards - 1)) / totalCards) * 100 * 0.82;
-        gsap.set(trackRef.current, { xPercent });
+          const xPercent = -((self.progress * (totalCards - 1)) / totalCards) * 100 * 0.82;
+          gsap.set(trackRef.current, { xPercent });
 
-        cards.forEach((card, idx) => {
-          const distance = Math.abs(progress - idx);
+          cards.forEach((card, idx) => {
+            const distance = Math.abs(progress - idx);
 
-          if (distance < 0.4) {
-            gsap.to(card, {
-              opacity: 1,
-              scale: 1,
-              filter: 'blur(0px)',
-              borderColor: '#52C3C1',
-              duration: 0.3,
-              overwrite: 'auto',
-            });
-          } else if (distance < 1.2) {
-            gsap.to(card, {
-              opacity: 0.4,
-              scale: 0.94,
-              filter: 'blur(6px)',
-              borderColor: '#262626',
-              duration: 0.3,
-              overwrite: 'auto',
-            });
-          } else {
-            gsap.to(card, {
-              opacity: 0.1,
-              scale: 0.88,
-              filter: 'blur(12px)',
-              borderColor: '#171717',
-              duration: 0.3,
-              overwrite: 'auto',
-            });
-          }
-        });
+            if (distance < 0.4) {
+              gsap.to(card, {
+                opacity: 1,
+                scale: 1,
+                filter: 'blur(0px)',
+                borderColor: '#52C3C1',
+                duration: 0.3,
+                overwrite: 'auto',
+              });
+            } else if (distance < 1.2) {
+              gsap.to(card, {
+                opacity: 0.4,
+                scale: 0.94,
+                filter: 'blur(6px)',
+                borderColor: '#262626',
+                duration: 0.3,
+                overwrite: 'auto',
+              });
+            } else {
+              gsap.to(card, {
+                opacity: 0.1,
+                scale: 0.88,
+                filter: 'blur(12px)',
+                borderColor: '#171717',
+                duration: 0.3,
+                overwrite: 'auto',
+              });
+            }
+          });
+        },
       },
     });
+
+    scrollTriggerRef.current = mainTl.scrollTrigger || null;
+
+    // 1. Entrance Title Drop
+    mainTl.fromTo(
+      headerRef.current,
+      { y: -30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
+    );
+
+    // 2. Shared Element Morph for Card 01 (Morphs from skill showcase focus)[cite: 1]
+    if (cards[0]) {
+      mainTl.fromTo(
+        cards[0],
+        { scale: 0.82, opacity: 0, y: 40 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: 'back.out(1.2)' },
+        '-=0.2'
+      );
+    }
+
+    // 3. Stagger remaining cards entering horizontally from the right
+    if (cards.length > 1) {
+      mainTl.fromTo(
+        cards.slice(1),
+        { x: 120, opacity: 0, filter: 'blur(10px)' },
+        { x: 0, opacity: 0.4, filter: 'blur(6px)', stagger: 0.1, duration: 0.6, ease: 'power2.out' },
+        '-=0.4'
+      );
+    }
 
     return () => {
       scrollTriggerRef.current?.kill();
@@ -204,8 +238,8 @@ export const Showcase: React.FC = () => {
         isDragging ? 'cursor-grabbing' : 'cursor-grab'
       }`}
     >
-      {/* Title Header - Positioned directly on top of cards */}
-      <div className="pb-1 border-b border-white/10 shrink-0 z-20 w-full flex justify-between items-end">
+      {/* Title Header */}
+      <div ref={headerRef} className="pb-1 border-b border-white/10 shrink-0 z-20 w-full flex justify-between items-end">
         <h2 className="text-3xl md:text-5xl font-black font-sans uppercase tracking-tight text-white leading-none">
           SELECTED <span className="text-[#52C3C1]">PROJECTS</span>
         </h2>
@@ -219,7 +253,7 @@ export const Showcase: React.FC = () => {
         </div>
       </div>
 
-      {/* Horizontal Track Container - Tighter vertical margin */}
+      {/* Horizontal Track Container */}
       <div className="relative w-full flex-1 flex items-center overflow-hidden mt-2 md:mt-3">
         <div
           ref={trackRef}

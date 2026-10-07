@@ -100,42 +100,80 @@ const SKILLS_DATA: Skill[] = [
 ];
 
 export const SkillSelector: React.FC = () => {
-  // Skill 02 is "Motion Graphics" (index 1) default
   const [activeSkill, setActiveSkill] = useState<Skill>(SKILLS_DATA[1]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const leftGridRef = useRef<HTMLDivElement>(null);
+  const rightGridRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const expBarRef = useRef<HTMLDivElement>(null);
   const strBarRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
 
-  // 1. ScrollTrigger Sequence: Pins section and cycles through skills as user scrolls
+  const activeIndexRef = useRef<number>(1);
+
+  // Option 1 Arcade Pin & Reveal Entrance Transition
+  useGSAP(
+    () => {
+      if (!containerRef.current) return;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=250%',
+          pin: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
+            const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
+
+            if (activeIndexRef.current !== clampedIndex) {
+              activeIndexRef.current = clampedIndex;
+              setActiveSkill(SKILLS_DATA[clampedIndex]);
+            }
+          },
+        },
+      });
+
+      // 1. Arcade Title Decode / Drop
+      tl.fromTo(
+        titleRef.current,
+        { opacity: 0, y: -40, filter: 'blur(8px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }
+      );
+
+      // 2. Left Cards Stagger In (from Left)
+      tl.fromTo(
+        leftGridRef.current?.children || [],
+        { x: -70, opacity: 0, scale: 0.9 },
+        { x: 0, opacity: 1, scale: 1, stagger: 0.1, duration: 0.7, ease: 'power2.out' },
+        '-=0.2'
+      );
+
+      // 3. Right Cards Stagger In (from Right)
+      tl.fromTo(
+        rightGridRef.current?.children || [],
+        { x: 70, opacity: 0, scale: 0.9 },
+        { x: 0, opacity: 1, scale: 1, stagger: 0.1, duration: 0.7, ease: 'power2.out' },
+        '-=0.7'
+      );
+
+      // 4. Center Inspect Card Scale In
+      tl.fromTo(
+        cardRef.current,
+        { scale: 0.82, opacity: 0, y: 30 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.2)' },
+        '-=0.4'
+      );
+    },
+    { scope: containerRef }
+  );
+
+  // Animate Center Showcase Content Updates
   useGSAP(() => {
-    if (!containerRef.current) return;
-
-    const st = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: 'top top',
-      end: '+=300%',
-      pin: true,
-      scrub: 0.5,
-      snap: 1 / (SKILLS_DATA.length - 1),
-      onUpdate: (self) => {
-        const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
-        const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
-
-        setActiveSkill(SKILLS_DATA[clampedIndex]);
-      },
-    });
-
-    return () => {
-      st.kill();
-    };
-  }, { scope: containerRef });
-
-  // 2. Animate Center Showcase Card & Progress Bars whenever activeSkill changes (via scroll or hover)
-  useGSAP(() => {
-    // Center Preview Image Transition
     if (imageRef.current) {
       gsap.fromTo(
         imageRef.current,
@@ -144,7 +182,6 @@ export const SkillSelector: React.FC = () => {
       );
     }
 
-    // EXP Bar animation
     if (expBarRef.current) {
       gsap.fromTo(
         expBarRef.current,
@@ -153,7 +190,6 @@ export const SkillSelector: React.FC = () => {
       );
     }
 
-    // STR Bar animation
     if (strBarRef.current) {
       gsap.fromTo(
         strBarRef.current,
@@ -162,7 +198,6 @@ export const SkillSelector: React.FC = () => {
       );
     }
 
-    // Card subtle pulse
     if (cardRef.current) {
       gsap.fromTo(
         cardRef.current,
@@ -179,32 +214,26 @@ export const SkillSelector: React.FC = () => {
       data-scroll-section
       className="py-20 px-4 md:px-8 bg-[#111111] text-white min-h-screen flex flex-col justify-center items-center font-sans relative overflow-hidden"
     >
-
       <div data-scroll-content className="max-w-6xl w-full mx-auto relative z-10">
-        {/* Header Title with Scroll Tracker */}
-        <div className="mb-10 flex justify-center border-b border-neutral-800 pb-6 text-center">
+        {/* Header Title */}
+        <div ref={titleRef} className="mb-10 flex justify-center border-b border-neutral-800 pb-6 text-center">
           <div className="w-full">
-          
             <h2 className="mt-3 text-center font-header text-3xl font-black uppercase tracking-tight text-white md:text-5xl">
-             <span className="text-[#52C3C1]"> SELECT YOUR POWER UP . . . . </span>
+              <span className="text-[#52C3C1]"> SELECT YOUR POWER UP . . . . </span>
             </h2>
           </div>
-
         </div>
 
-        {/* Main Grid Layout: Center Showcase + Surrounding Skill Cards */}
+        {/* Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
           {/* Left Column: Cards 01 - 04 */}
-          <div className="grid grid-cols-2 gap-3 lg:col-span-4">
+          <div ref={leftGridRef} className="grid grid-cols-2 gap-3 lg:col-span-4">
             {SKILLS_DATA.slice(0, 4).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
                 <div
                   key={skill.id}
-                  onMouseEnter={() => {
-                    setActiveSkill(skill);
-                  }}
+                  onMouseEnter={() => setActiveSkill(skill)}
                   className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] translate-x-2'
@@ -240,9 +269,8 @@ export const SkillSelector: React.FC = () => {
             })}
           </div>
 
-          {/* Center Column: Dynamic Showcase Card (Active Skill) */}
+          {/* Center Column: Dynamic Showcase Card */}
           <div ref={cardRef} className="lg:col-span-4 bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col">
-            {/* Banner Preview Image */}
             <div className="relative aspect-16/9 rounded-xl overflow-hidden mb-6 border border-neutral-800 bg-neutral-900">
               <img
                 ref={imageRef}
@@ -251,8 +279,6 @@ export const SkillSelector: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent opacity-90" />
-              
-              {/* Overlay Badge & Number */}
               <div className="absolute top-4 left-4 flex items-center space-x-2">
                 <span className="text-xs font-mono px-3 py-1 bg-black/80 backdrop-blur-md border border-[#52C3C1]/50 text-[#52C3C1] font-bold rounded-md">
                   #{activeSkill.number}
@@ -263,7 +289,6 @@ export const SkillSelector: React.FC = () => {
               </div>
             </div>
 
-            {/* Active Skill Title & Description */}
             <div className="flex flex-col mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">SELECTED ABILITY</span>
@@ -283,9 +308,7 @@ export const SkillSelector: React.FC = () => {
               )}
             </div>
 
-            {/* EXP & STR Stats Bars */}
             <div className="space-y-4 pt-4 border-t border-neutral-800">
-              {/* EXP Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1 text-xs font-mono">
                   <span className="text-zinc-400 uppercase tracking-wider">EXP (EXPERIENCE)</span>
@@ -300,7 +323,6 @@ export const SkillSelector: React.FC = () => {
                 </div>
               </div>
 
-              {/* STR Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1 text-xs font-mono">
                   <span className="text-zinc-400 uppercase tracking-wider">STR (MASTERY & POWER)</span>
@@ -318,15 +340,13 @@ export const SkillSelector: React.FC = () => {
           </div>
 
           {/* Right Column: Cards 05 - 08 */}
-          <div className="grid grid-cols-2 gap-3 lg:col-span-4">
+          <div ref={rightGridRef} className="grid grid-cols-2 gap-3 lg:col-span-4">
             {SKILLS_DATA.slice(4, 8).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
                 <div
                   key={skill.id}
-                  onMouseEnter={() => {
-                    setActiveSkill(skill);
-                  }}
+                  onMouseEnter={() => setActiveSkill(skill)}
                   className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] -translate-x-2'
@@ -361,7 +381,6 @@ export const SkillSelector: React.FC = () => {
               );
             })}
           </div>
-
         </div>
 
         {/* Bottom Helper */}
