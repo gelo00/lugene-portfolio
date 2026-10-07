@@ -163,13 +163,13 @@ export const Showcasev2: React.FC = () => {
       <div className="h-screen flex flex-col justify-between py-10 relative z-10">
         <div
           ref={headerRef}
-          className="px-6 md:px-16 max-w-7xl w-full mx-auto flex flex-col md:flex-row md:items-end justify-between transition-transform duration-300"
+          className="relative top-20 px-6 md:px-16 max-w-7xl w-full mx-auto flex flex-col md:flex-row md:items-end justify-between transition-transform duration-300"
         >
           <div>
         
             <h2 className="text-3xl md:text-5xl font-extrabold uppercase tracking-tight text-[#F0F0F0]">
               SELECTED
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00C2A7] to-[#E94E77]">
+              <span className="pl-2 sbg-clip-text text-[#52C3C1]">
                 PROJECT'S
               </span>
             </h2>

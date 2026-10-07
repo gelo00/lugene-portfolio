@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+echo "Running frontend checks before commit..."
+npm --prefix frontend run check:commit

@@ -74,6 +74,25 @@ cd frontend
 npm run build
 ```
 
+### Check before committing
+
+The repository includes a Git pre-commit hook that runs the frontend production
+build. This runs TypeScript compilation and catches errors such as unused
+declarations and incompatible callback types, blocking the commit if the build
+fails.
+
+Enable the hook once in each clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Run the same checks manually at any time:
+
+```bash
+npm --prefix frontend run check:commit
+```
+
 ### Preview a production build
 
 ```bash
@@ -105,6 +124,7 @@ Inside the frontend package, common scripts include:
 npm run dev
 npm run build
 npm run lint
+npm run check:commit
 npm run preview
 ```
 

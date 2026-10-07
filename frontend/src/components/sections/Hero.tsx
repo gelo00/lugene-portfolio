@@ -5,11 +5,8 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export interface HeroProps {
-  onOpenShowreel?: () => void;
-}
 
-export const Hero: React.FC<HeroProps> = ({ onOpenShowreel }) => {
+export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

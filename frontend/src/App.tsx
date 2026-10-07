@@ -5,19 +5,13 @@ import { useGSAP } from '@gsap/react';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
-import  Showcase from './components/sections/Showcase';
 import { Footer } from './components/layout/Footer';
 import SkillSelector from './components/sections/SkillSeletor';
 import ShowreelSection from './components/sections/ShowreelSection';
 import { TemporaryLoader } from './components/ui/TemporaryLoader';
 import CustomCursor from './components/ui/CustomCursor';
-import { SelectedProjects } from './components/sections/SelectedProjects';
 import { Showcasev2 } from './components/sections/Showcasev2';
-import { EditorialProjects } from './components/sections/EditorialProject';
-import { InteractiveListProjects } from './components/sections/InteractiveListProjects';
-import Footerv2 from './components/layout/Footerv2';
-import { Servicev2 } from './components/sections/Servicev2';
-import { Services } from './components/sections/Services';
+
 
 gsap.registerPlugin(ScrollTrigger);
 
