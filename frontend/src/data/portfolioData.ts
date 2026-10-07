@@ -1,4 +1,4 @@
-import { ServiceCard, Project } from '@/types';
+import type { ServiceCard, Project } from '../types';
 
 export const SERVICES_DATA: ServiceCard[] = [
   {

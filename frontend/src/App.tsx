@@ -9,6 +9,7 @@ import  Showcase from './components/sections/Showcase';
 import { Footer } from './components/layout/Footer';
 import SkillSelector from './components/sections/SkillSeletor';
 import ShowreelSection from './components/sections/ShowreelSection';
+import { TemporaryLoader } from './components/ui/TemporaryLoader';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,7 +20,7 @@ export const App: React.FC = () => {
     const page = pageRef.current;
     if (!page) return;
 
-    const createPageTimelines = (distance: number, duration: number) => {
+    const createPageTimelines = (distance: number) => {
      
 
       const heroTitle = page.querySelector<HTMLElement>('[data-hero-title]');
@@ -92,22 +93,25 @@ export const App: React.FC = () => {
     const media = gsap.matchMedia();
     media.add(
       '(min-width: 768px) and (prefers-reduced-motion: no-preference)',
-      () => createPageTimelines(56, 0.9)
+      () => createPageTimelines(56)
     );
     media.add(
       '(max-width: 767px) and (prefers-reduced-motion: no-preference)',
-      () => createPageTimelines(24, 0.65)
+      () => createPageTimelines(24)
     );
 
     return () => media.revert();
   }, { scope: pageRef });
 
   return (
-    <div ref={pageRef} className="relative min-h-screen bg-bg-dark text-text-primary selection:bg-primary selection:text-black font-body overflow-x-hidden">
-      {/* Interactive Custom Cursor & Cyberpunk Glow Background */}
+    <>
+      <TemporaryLoader />
+
+      <div ref={pageRef} className="relative min-h-screen bg-bg-dark text-text-primary selection:bg-primary selection:text-black font-body overflow-x-hidden">
+        {/* Interactive Custom Cursor & Cyberpunk Glow Background */}
   
-      {/* Main Navigation Header */}
-      <Header />
+        {/* Main Navigation Header */}
+        <Header />
 
       {/* Main Content Sections */}
       <main className="relative z-10">
@@ -124,10 +128,11 @@ export const App: React.FC = () => {
         <ShowreelSection />
       </main>
 
-      {/* Footer */}
+        {/* Footer */}
    
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 
