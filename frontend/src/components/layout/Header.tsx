@@ -34,7 +34,7 @@ export const Header: React.FC = () => {
 
     ScrollTrigger.create({
       trigger: footerEl,
-      start: 'top 90%', // Triggers when top of footer reaches 85% viewport
+      start: 'top 100%', // Triggers when top of footer reaches 85% viewport
       onEnter: () => {
         setIsMenuOpen(false); // Close dropdown menu if open
         gsap.to(navRef.current, {
@@ -135,11 +135,11 @@ export const Header: React.FC = () => {
   return (
     <header
       ref={headerRef}
-      className="fixed top-0 inset-x-0 z-50 flex justify-center px-6 py-4 pointer-events-none font-mono"
+      className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 py-3 pointer-events-none font-mono sm:px-6 sm:py-4"
     >
       <nav
         ref={navRef}
-        className={`pointer-events-auto w-full max-w-6xl px-6 py-2.5 rounded-full flex items-center justify-between transition-all duration-500 ${
+        className={`pointer-events-auto flex w-full max-w-6xl items-center justify-between gap-2 rounded-full px-3 py-2.5 transition-all duration-500 sm:px-6 ${
           isScrolled
             ? 'bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
             : 'bg-transparent border border-transparent'
@@ -148,7 +148,7 @@ export const Header: React.FC = () => {
         {/* Brand Logo / Home Trigger */}
         <button
           onClick={() => scrollTo('top')}
-          className="flex items-center space-x-2 text-white font-sans font-black text-sm tracking-widest uppercase group cursor-pointer"
+          className="flex shrink-0 items-center space-x-2 text-xs font-black uppercase tracking-widest text-white group font-sans sm:text-sm"
         >
           <span className="w-2 h-2 rounded-full bg-[#52C3C1] group-hover:scale-125 transition-transform duration-300" />
           <span className="group-hover:text-[#52C3C1] transition-colors">LUGENE</span>
@@ -206,9 +206,9 @@ export const Header: React.FC = () => {
         {/* Minimal Action Trigger */}
         <button
           onClick={scrollToShowreel}
-          className="relative group px-4 py-1.5 text-xs font-bold tracking-wider text-[#52C3C1] hover:text-black rounded-full transition-all duration-300 cursor-pointer overflow-hidden border border-[#52C3C1]/30 hover:border-[#52C3C1]"
+          className="relative shrink-0 overflow-hidden rounded-full border border-[#52C3C1]/30 px-2.5 py-2 text-[10px] font-bold tracking-wide text-[#52C3C1] transition-all duration-300 group hover:border-[#52C3C1] hover:text-black sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-wider"
         >
-          <span className="relative z-10">PLAY REEL</span>
+          <span className="relative z-10 whitespace-nowrap">PLAY REEL</span>
           <span className="absolute inset-0 bg-[#52C3C1] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
         </button>
       </nav>

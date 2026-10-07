@@ -122,17 +122,19 @@ export const SkillSelector: React.FC = () => {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=250%',
-          pin: true,
+          end: window.matchMedia('(min-width: 768px)').matches ? '+=250%' : 'bottom top',
+          pin: window.matchMedia('(min-width: 768px)').matches,
           scrub: 0.8,
           anticipatePin: 1,
           onUpdate: (self) => {
-            const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
-            const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
+            if (window.matchMedia('(min-width: 768px)').matches) {
+              const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
+              const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
 
-            if (activeIndexRef.current !== clampedIndex) {
-              activeIndexRef.current = clampedIndex;
-              setActiveSkill(SKILLS_DATA[clampedIndex]);
+              if (activeIndexRef.current !== clampedIndex) {
+                activeIndexRef.current = clampedIndex;
+                setActiveSkill(SKILLS_DATA[clampedIndex]);
+              }
             }
           },
         },
@@ -212,7 +214,7 @@ export const SkillSelector: React.FC = () => {
       id="services"
       ref={containerRef}
       data-scroll-section
-      className="py-20 px-4 md:px-8 bg-[#111111] text-white min-h-screen flex flex-col justify-center items-center font-sans relative overflow-hidden"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#111111] px-4 py-12 font-sans text-white sm:py-16 md:px-8 md:py-20"
     >
       <div data-scroll-content className="max-w-6xl w-full mx-auto relative z-10">
         {/* Header Title */}
@@ -231,10 +233,12 @@ export const SkillSelector: React.FC = () => {
             {SKILLS_DATA.slice(0, 4).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
-                <div
+                <button
+                  type="button"
                   key={skill.id}
                   onMouseEnter={() => setActiveSkill(skill)}
-                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
+                  onClick={() => setActiveSkill(skill)}
+                  className={`w-full p-3 text-left sm:p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'
@@ -264,7 +268,7 @@ export const SkillSelector: React.FC = () => {
                   }`}>
                     {skill.badge}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -344,10 +348,12 @@ export const SkillSelector: React.FC = () => {
             {SKILLS_DATA.slice(4, 8).map((skill) => {
               const isActive = activeSkill.id === skill.id;
               return (
-                <div
+                <button
+                  type="button"
                   key={skill.id}
                   onMouseEnter={() => setActiveSkill(skill)}
-                  className={`p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
+                  onClick={() => setActiveSkill(skill)}
+                  className={`w-full p-3 text-left sm:p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] -translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'
@@ -377,7 +383,7 @@ export const SkillSelector: React.FC = () => {
                   }`}>
                     {skill.badge}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -385,7 +391,7 @@ export const SkillSelector: React.FC = () => {
 
         {/* Bottom Helper */}
         <div className="mt-8 text-center text-xs font-mono text-neutral-500 uppercase tracking-widest flex items-center justify-center space-x-2">
-          <span>SCROLL TO CYCLE SKILLS • HOVER TO INSPECT MANUALLY</span>
+          <span>SCROLL TO CYCLE ON DESKTOP • TAP OR HOVER TO INSPECT</span>
           <div className="w-1.5 h-1.5 rounded-full bg-[#52C3C1] animate-ping" />
         </div>
       </div>

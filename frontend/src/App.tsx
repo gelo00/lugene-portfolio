@@ -11,6 +11,13 @@ import SkillSelector from './components/sections/SkillSeletor';
 import ShowreelSection from './components/sections/ShowreelSection';
 import { TemporaryLoader } from './components/ui/TemporaryLoader';
 import CustomCursor from './components/ui/CustomCursor';
+import { SelectedProjects } from './components/sections/SelectedProjects';
+import { Showcasev2 } from './components/sections/Showcasev2';
+import { EditorialProjects } from './components/sections/EditorialProject';
+import { InteractiveListProjects } from './components/sections/InteractiveListProjects';
+import Footerv2 from './components/layout/Footerv2';
+import { Servicev2 } from './components/sections/Servicev2';
+import { Services } from './components/sections/Services';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -137,15 +144,18 @@ export const App: React.FC = () => {
         {/* Services / Capabilities Section */}
         <SkillSelector />
         {/* Showcase / Selected Works Portfolio Gallery */}
-        <Showcase />
-
+        {/* <SelectedProjects/> */}
+        {/* <Showcase /> */}
+        <Showcasev2/>
+        {/* <EditorialProjects/> */}
+        {/* <InteractiveListProjects/> */}
         {/* Section 5: Showreel Section (Autoplay On Focus & Chapter Sections) */}
         <ShowreelSection />
+
       </main>
 
-        {/* Footer */}
-   
         <Footer />
+        {/* <Footerv2/> */}
       </div>
     </>
   );

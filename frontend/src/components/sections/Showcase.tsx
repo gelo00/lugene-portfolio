@@ -79,7 +79,7 @@ export const Showcase: React.FC = () => {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: () => `+=${totalCards * 100}%`,
+        end: () => `+=${totalCards * (window.matchMedia('(min-width: 768px)').matches ? 100 : 55)}%`,
         pin: true,
         scrub: 0.6,
         onUpdate: (self) => {
@@ -87,8 +87,11 @@ export const Showcase: React.FC = () => {
           const currentIndex = Math.min(Math.max(Math.round(progress), 0), totalCards - 1);
           setActiveIndex(currentIndex);
 
-          const xPercent = -((self.progress * (totalCards - 1)) / totalCards) * 100 * 0.82;
-          gsap.set(trackRef.current, { xPercent });
+          const trackWidth = trackRef.current?.scrollWidth ?? 0;
+          const viewportWidth = sectionRef.current?.clientWidth ?? 0;
+          gsap.set(trackRef.current, {
+            x: -self.progress * Math.max(0, trackWidth - viewportWidth),
+          });
 
           cards.forEach((card, idx) => {
             const distance = Math.abs(progress - idx);
@@ -234,16 +237,16 @@ export const Showcase: React.FC = () => {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className={`relative w-full h-screen min-h-screen text-white px-6 md:px-16 pt-[8vh] md:pt-[10vh] pb-6 flex flex-col justify-start select-none overflow-hidden font-mono z-10 touch-pan-y ${
+      className={`relative z-10 flex h-screen min-h-screen w-full flex-col justify-start overflow-hidden px-4 pb-5 pt-[8vh] font-mono text-white select-none touch-pan-y sm:px-6 sm:pb-6 md:px-16 md:pt-[10vh] ${
         isDragging ? 'cursor-grabbing' : 'cursor-grab'
       }`}
     >
       {/* Title Header */}
-      <div ref={headerRef} className="pb-1 border-b border-white/10 shrink-0 z-20 w-full flex justify-between items-end">
-        <h2 className="text-3xl md:text-5xl font-black font-sans uppercase tracking-tight text-white leading-none">
+      <div ref={headerRef} className="z-20 flex w-full shrink-0 flex-col items-start gap-2 border-b border-white/10 pb-2 sm:flex-row sm:items-end sm:justify-between">
+        <h2 className="text-2xl font-black uppercase leading-tight tracking-tight text-white font-sans sm:text-3xl md:text-5xl">
           SELECTED <span className="text-[#52C3C1]">PROJECTS</span>
         </h2>
-        <div className="flex items-center space-x-4">
+        <div className="flex shrink-0 items-center space-x-2 self-end sm:self-auto sm:space-x-4">
           <span className="text-xs text-neutral-500 hidden sm:block">
             DRAG / SWIPE OR SCROLL
           </span>
@@ -254,19 +257,18 @@ export const Showcase: React.FC = () => {
       </div>
 
       {/* Horizontal Track Container */}
-      <div className="relative w-full flex-1 flex items-center overflow-hidden mt-2 md:mt-3">
+      <div className="relative mt-2 flex w-full flex-1 items-center overflow-hidden md:mt-3">
         <div
           ref={trackRef}
-          className="flex items-center space-x-8 md:space-x-12 px-4 transition-transform ease-out"
-          style={{ width: `${PORTFOLIO_PROJECTS.length * 75}vw` }}
+          className="flex w-max items-center space-x-5 px-4 transition-transform ease-out sm:space-x-8 md:space-x-12"
         >
           {PORTFOLIO_PROJECTS.map((project) => (
             <div
               key={project.id}
-              className="showcase-card relative flex-shrink-0 w-[80vw] md:w-[60vw] lg:w-[50vw] max-w-4xl bg-[#141414] border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl transition-colors duration-300 pointer-events-none"
+              className="showcase-card relative w-[86vw] max-w-4xl flex-shrink-0 overflow-hidden rounded-2xl border border-neutral-800 bg-[#141414] shadow-2xl transition-colors duration-300 pointer-events-none md:w-[60vw] lg:w-[50vw]"
             >
               {/* Media Container */}
-              <div className="relative h-[38vh] md:h-[44vh] w-full bg-neutral-900 overflow-hidden">
+              <div className="relative h-[34vh] w-full overflow-hidden bg-neutral-900 sm:h-[38vh] md:h-[44vh]">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -275,7 +277,7 @@ export const Showcase: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/30" />
 
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-                  <span className="px-3 py-1 bg-black/80 backdrop-blur-md border border-neutral-700 text-[#52C3C1] text-xs font-bold rounded-full">
+                  <span className="max-w-[68%] truncate rounded-full border border-neutral-700 bg-black/80 px-2 py-1 text-[10px] font-bold text-[#52C3C1] backdrop-blur-md sm:px-3 sm:text-xs">
                     #{project.number} // {project.category}
                   </span>
                   <span className="px-3 py-1 bg-black/80 backdrop-blur-md border border-neutral-700 text-neutral-300 text-xs rounded-full">
@@ -285,9 +287,9 @@ export const Showcase: React.FC = () => {
               </div>
 
               {/* Text Info Container */}
-              <div className="p-6 bg-[#141414] flex justify-between items-center">
+              <div className="flex flex-col items-start justify-between gap-3 bg-[#141414] p-4 sm:flex-row sm:items-center sm:p-6">
                 <div>
-                  <h3 className="text-2xl md:text-3xl font-black font-sans uppercase text-white tracking-tight">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-white font-sans sm:text-2xl md:text-3xl">
                     {project.title}
                   </h3>
                   <p className="text-neutral-400 text-xs mt-1">
@@ -295,7 +297,7 @@ export const Showcase: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex gap-1.5">
+                <div className="flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (
                     <span
                       key={tag}

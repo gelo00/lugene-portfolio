@@ -20,8 +20,8 @@ export const About: React.FC = () => {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '+=100%',
-          pin: true,
+          end: window.matchMedia('(min-width: 768px)').matches ? '+=100%' : 'bottom top',
+          pin: window.matchMedia('(min-width: 768px)').matches,
           scrub: 1,
         },
       });
@@ -82,12 +82,12 @@ export const About: React.FC = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#111111] text-white flex justify-center items-center min-h-screen overflow-hidden"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#111111] px-4 py-12 text-white sm:py-16 md:px-8 md:py-24"
     >
       {/* Main Container Card */}
       <div
         ref={cardRef}
-        className="relative w-full max-w-6xl bg-[#1a1a1a] rounded-3xl p-8 md:p-14 shadow-2xl border border-zinc-800/80 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center z-10"
+        className="relative z-10 grid w-full max-w-6xl grid-cols-1 items-center gap-8 rounded-3xl border border-zinc-800/80 bg-[#1a1a1a] p-5 shadow-2xl sm:gap-10 sm:p-8 md:p-14 lg:grid-cols-12 lg:gap-12"
       >
         {/* Left Column: Polaroid Frame */}
         <div className="lg:col-span-5 flex justify-center items-center">

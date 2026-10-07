@@ -66,7 +66,7 @@ const ShowreelSection: React.FC = () => {
       id: 'showreel-transition',
       trigger: containerRef.current,
       start: 'top top',
-      end: '+=200%',
+      end: () => `+=${window.matchMedia('(min-width: 768px)').matches ? 200 : 100}%`,
       pin: true,
       scrub: 1.2,
       invalidateOnRefresh: true,
@@ -84,11 +84,11 @@ const ShowreelSection: React.FC = () => {
     <section
       ref={containerRef}
       id="showreel"
-      className="relative z-20 h-screen w-full overflow-hidden select-none"
+      className="relative z-20 h-screen min-h-[100svh] w-full overflow-hidden select-none"
     >
       <div
         ref={panelRef}
-        className="relative flex h-full w-full flex-col items-center justify-center bg-[#111111] px-6 py-12 text-white shadow-[0_-20px_50px_rgba(0,0,0,0.9)] md:px-16"
+        className="relative flex h-full w-full flex-col items-center justify-center bg-[#111111] px-4 py-8 text-white shadow-[0_-20px_50px_rgba(0,0,0,0.9)] sm:px-6 sm:py-12 md:px-16"
       >
         <div className="w-full max-w-7xl mx-auto flex flex-col items-center">
           
@@ -97,7 +97,7 @@ const ShowreelSection: React.FC = () => {
             ref={videoCardRef}
             className="relative w-full rounded-2xl overflow-hidden bg-black border border-neutral-800 shadow-2xl group transition-all duration-300"
           >
-            <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden max-h-[65vh]">
+            <div className="relative aspect-video max-h-[65vh] w-full overflow-hidden bg-black flex items-center justify-center">
               <video
                 ref={videoRef}
                 src="https://samplelib.com/mp4/sample-10s.mp4"

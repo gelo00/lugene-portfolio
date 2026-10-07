@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { label: 'ABOUT', targetId: 'about' },
   { label: 'SKILLS', targetId: 'services' },
   { label: 'PROJECTS', targetId: 'showcase' },
-  { label: 'REEL', targetId: 'showreel' },
 ];
 
 export const Footer: React.FC = () => {
@@ -62,7 +61,7 @@ export const Footer: React.FC = () => {
     document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Option 1: Parallax Reveal & Stagger Animation
+  // Parallax Reveal & Stagger Animation
   useGSAP(() => {
     if (!footerRef.current || !ctaContainerRef.current) return;
 
@@ -109,10 +108,10 @@ export const Footer: React.FC = () => {
       ref={footerRef}
       id="footer"
       data-scroll-section
-      className="bg-[#0e0e0e] text-white relative z-10 overflow-hidden select-none min-h-screen flex flex-col justify-between py-6 px-4 md:px-12"
+      className="relative z-10 flex min-h-screen flex-col justify-between overflow-hidden bg-[#0e0e0e] px-4 py-5 text-white select-none sm:px-6 sm:py-6 md:px-12"
     >
       {/* Top Header Navigation Indicator Bar */}
-      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 border-b border-white/5 py-4 text-[11px] font-mono tracking-widest text-neutral-400">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-center gap-3 border-b border-white/5 py-4 text-[10px] font-mono tracking-widest text-neutral-400 sm:justify-between sm:gap-4 sm:text-[11px]">
         <button
           type="button"
           onClick={scrollToTop}
@@ -123,7 +122,7 @@ export const Footer: React.FC = () => {
           <span className="font-bold text-white uppercase">LUGENE</span>
         </button>
 
-        <nav aria-label="Section navigation" className="flex flex-wrap items-center justify-center gap-2 sm:gap-5">
+        <nav aria-label="Section navigation" className="order-3 flex w-full flex-wrap items-center justify-center gap-1 sm:order-none sm:w-auto sm:gap-5">
           {NAV_ITEMS.map(({ label, targetId }) => {
             const isActive = activeSection === targetId;
             return (
@@ -156,23 +155,15 @@ export const Footer: React.FC = () => {
         </button>
       </div>
 
-      {/* Center Interactive Cursor Dot Ring Visual Accent */}
-      <div className="my-8 flex justify-center">
-        <div className="relative w-8 h-8 flex items-center justify-center">
-          <div className="absolute w-8 h-8 rounded-full border border-[#52C3C1]/40 animate-ping" />
-          <div className="w-2 h-2 rounded-full bg-[#52C3C1]" />
-        </div>
-      </div>
-
       {/* Main Full-Bleed Teal CTA Banner */}
       <div
         ref={ctaContainerRef}
-        className="w-full max-w-7xl mx-auto bg-[#52C3C1] text-black rounded-2xl py-16 px-6 md:px-12 text-center relative overflow-hidden shadow-2xl my-auto"
+        className="my-auto mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#52C3C1] px-5 py-10 text-center text-black shadow-2xl relative sm:px-8 sm:py-12 md:px-12 md:py-16"
       >
         <div data-scroll-content className="max-w-3xl mx-auto z-10 relative">
           <h2
             ref={headingRef}
-            className="text-3xl sm:text-5xl lg:text-6xl font-black font-sans uppercase tracking-tight mb-6 text-neutral-900 leading-tight"
+            className="mb-5 text-3xl font-black uppercase leading-tight tracking-tight text-neutral-900 font-sans sm:mb-6 sm:text-5xl lg:text-6xl"
           >
             LET'S MAKE SOMETHING AWESOME
           </h2>
@@ -186,7 +177,7 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Footer Bottom Controls & Metadata */}
-      <div className="w-full max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-neutral-400 text-xs font-mono">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-5 border-t border-white/5 pt-6 text-center text-xs font-mono text-neutral-400 sm:pt-8 md:flex-row md:text-left">
         
         {/* Brand Copyright */}
         <div>
@@ -199,7 +190,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Social Links */}
-        <div className="flex gap-8 text-[11px] font-bold tracking-widest">
+        <div className="flex flex-wrap justify-center gap-6 text-[11px] font-bold tracking-widest sm:gap-8">
           <a
             href="https://linkedin.com"
             target="_blank"
@@ -218,24 +209,14 @@ export const Footer: React.FC = () => {
           </a>
         </div>
 
-        {/* Back to Top & Scroll Mouse Indicator */}
-        <div className="flex items-center gap-6">
-          <button
-            onClick={scrollToTop}
-            className="px-4 py-2 border border-neutral-800 hover:border-[#52C3C1] text-white rounded font-mono hover:text-[#52C3C1] transition-all duration-300 flex items-center gap-2 cursor-pointer active:scale-95 text-[11px] font-bold"
-          >
-            <span>BACK TO TOP</span>
-            <span>↑</span>
-          </button>
-
-          {/* Mouse Scroll Graphic Accent */}
-          <div className="hidden sm:flex flex-col items-center gap-1 text-[9px] text-neutral-500 uppercase tracking-widest">
-            <span>SCROLL TO EXPLORE</span>
-            <div className="w-3.5 h-6 rounded-full border border-neutral-600 flex justify-center pt-1">
-              <div className="w-1 h-1.5 rounded-full bg-[#52C3C1] animate-bounce" />
-            </div>
-          </div>
-        </div>
+        {/* Back to Top Trigger */}
+        <button
+          onClick={scrollToTop}
+          className="px-4 py-2 border border-neutral-800 hover:border-[#52C3C1] text-white rounded font-mono hover:text-[#52C3C1] transition-all duration-300 flex items-center gap-2 cursor-pointer active:scale-95 text-[11px] font-bold"
+        >
+          <span>BACK TO TOP</span>
+          <span>↑</span>
+        </button>
 
       </div>
     </footer>
