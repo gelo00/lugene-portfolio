@@ -27,7 +27,6 @@ const ShowreelSection: React.FC = () => {
     videoRef.current?.pause();
   };
 
-  // Option 1: Scale-Up Expansion Transition
   useGSAP(() => {
     if (!containerRef.current || !panelRef.current || !videoCardRef.current) return;
 
@@ -38,13 +37,13 @@ const ShowreelSection: React.FC = () => {
       .fromTo(
         panelRef.current,
         { yPercent: 100, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 1, ease: 'none' }
+        { yPercent: 0, opacity: 1, duration: 0.35, ease: 'none' }
       )
       // 2. Expand video card from compact card to full-screen viewport scale
       .fromTo(
         videoCardRef.current,
         {
-          scale: 0.82,
+          scale: 0.88,
           borderRadius: '1.5rem',
           filter: 'blur(8px)',
         },
@@ -52,30 +51,30 @@ const ShowreelSection: React.FC = () => {
           scale: 1,
           borderRadius: '0.75rem',
           filter: 'blur(0px)',
-          duration: 1.2,
+          duration: 0.65,
           ease: 'power2.out',
         },
-        '-=0.5'
+        '-=0.2'
       )
       // 3. Trigger video playback once expanded
       .call(startPlayback)
       // 4. Hold section in view briefly while video plays
-      .to(panelRef.current, { yPercent: 0, duration: 1, ease: 'none' });
+      .to(panelRef.current, { yPercent: 0, duration: 0.2, ease: 'none' });
 
     ScrollTrigger.create({
       id: 'showreel-transition',
       trigger: containerRef.current,
       start: 'top top',
-      end: () => `+=${window.matchMedia('(min-width: 768px)').matches ? 200 : 100}%`,
+      end: '+=80%',
       pin: true,
-      scrub: 1.2,
+      scrub: 0.6,
       invalidateOnRefresh: true,
       animation: revealTimeline,
       onEnterBack: startPlayback,
       onLeaveBack: () => {
         pausePlayback();
         // Reset scale state when scrolling back up above section
-        gsap.set(videoCardRef.current, { scale: 0.82, borderRadius: '1.5rem' });
+        gsap.set(videoCardRef.current, { scale: 0.88, borderRadius: '1.5rem' });
       },
     });
   }, { scope: containerRef });

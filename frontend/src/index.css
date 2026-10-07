@@ -22,7 +22,12 @@
    html {
     scroll-behavior: smooth;
   }
-  body {
+   @media (prefers-reduced-motion: reduce) {
+     html {
+       scroll-behavior: auto;
+     }
+   }
+   body {
     background-color: var(--color-bg-dark);
     color: var(--color-text-primary);
     font-family: var(--font-body);

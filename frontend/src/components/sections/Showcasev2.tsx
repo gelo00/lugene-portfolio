@@ -102,6 +102,7 @@ const PORTFOLIO_SHOWCASE_PROJECTS: ProjectItem[] = [
 
 export const Showcasev2: React.FC = () => {
   const targetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -123,7 +124,7 @@ export const Showcasev2: React.FC = () => {
           pin: true,
           scrub: 0.8,
           start: 'top top',
-          end: () => `+=${scrollWidth + 600}`,
+          end: () => `+=${scrollWidth}`,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -150,6 +151,24 @@ export const Showcasev2: React.FC = () => {
         },
         0
       );
+
+      if (contentRef.current && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.fromTo(
+          contentRef.current,
+          { autoAlpha: 0, y: 24 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: target,
+              start: 'top bottom',
+              end: 'top top',
+              scrub: 0.6,
+            },
+          }
+        );
+      }
     },
     { scope: targetRef }
   );
@@ -160,7 +179,8 @@ export const Showcasev2: React.FC = () => {
       ref={targetRef}
       className="relative min-h-screen bg-[#111111] text-white overflow-hidden"
     >
-      <div className="h-screen flex flex-col justify-between py-10 relative z-10">
+      <div ref={contentRef} className="h-screen flex flex-col justify-between py-10 relative z-10">
+     
         <div
           ref={headerRef}
           className="relative top-20 px-6 md:px-16 max-w-7xl w-full mx-auto flex flex-col md:flex-row md:items-end justify-between transition-transform duration-300"
@@ -169,7 +189,7 @@ export const Showcasev2: React.FC = () => {
         
             <h2 className="text-3xl md:text-5xl font-extrabold uppercase tracking-tight text-[#F0F0F0]">
               SELECTED
-              <span className="pl-2 sbg-clip-text text-[#52C3C1]">
+              <span className="pl-2 bg-clip-text text-[#52C3C1]">
                 PROJECT'S
               </span>
             </h2>

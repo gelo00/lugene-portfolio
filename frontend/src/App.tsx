@@ -6,7 +6,7 @@ import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
 import { Footer } from './components/layout/Footer';
-import SkillSelector from './components/sections/SkillSeletor';
+import SkillSelector from './components/sections/SkillSelector';
 import ShowreelSection from './components/sections/ShowreelSection';
 import { TemporaryLoader } from './components/ui/TemporaryLoader';
 import CustomCursor from './components/ui/CustomCursor';
@@ -138,11 +138,9 @@ export const App: React.FC = () => {
         {/* Services / Capabilities Section */}
         <SkillSelector />
         {/* Showcase / Selected Works Portfolio Gallery */}
-        {/* <SelectedProjects/> */}
         {/* <Showcase /> */}
         <Showcasev2/>
-        {/* <EditorialProjects/> */}
-        {/* <InteractiveListProjects/> */}
+  
         {/* Section 5: Showreel Section (Autoplay On Focus & Chapter Sections) */}
         <ShowreelSection />
 

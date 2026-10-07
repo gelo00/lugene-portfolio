@@ -394,6 +394,7 @@ export const SkillSelector: React.FC = () => {
           <span>SCROLL TO CYCLE ON DESKTOP • TAP OR HOVER TO INSPECT</span>
           <div className="w-1.5 h-1.5 rounded-full bg-[#52C3C1] animate-ping" />
         </div>
+
       </div>
     </section>
   );
