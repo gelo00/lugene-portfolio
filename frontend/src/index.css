@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
+@import "tailwindcss";
+@theme {
+  --color-bg-dark: #111111;
+  --color-bg-card: #1F1F1F;
+  --color-primary: #52C3C1;
+  --color-primary-hover: #00A891;
+  --color-secondary: #E94E77;
+  --color-secondary-hover: #D43F66;
+  --color-accent: #FFC007;
+  --color-accent-hover: #E0A800;
+  --color-text-primary: #F0F0F0;
+  --color-text-muted: #AAAAAA;
+
+  --font-header: Montserrat, Inter, sans-serif;
+  --font-body: 'Dela Gothic One', 'Inter', system-ui, sans-serif;
+  --font-dela-gothic: 'Dela Gothic One', cursive, sans-serif;
+  
+}
+
+@layer base {
+   html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+  }
+}
+
+
+/* Custom Cyberpunk / Arcade Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Scrollbar Track (Dark Terminal Grid Background) */
+::-webkit-scrollbar-track {
+  background: #111111;
+  border-left: 1px solid rgba(0, 194, 167, 0.2);
+}
+
+/* Scrollbar Thumb (Glow Cyan Pixel Slider) */
+::-webkit-scrollbar-thumb {
+  background: #00C2A7;
+  border-radius: 0px; /* Sharp 8-bit square edges */
+  box-shadow: 0 0 10px rgba(0, 194, 167, 0.8);
+}
+
+/* Hover State (Electric Pink Power-Up) */
+::-webkit-scrollbar-thumb:hover {
+  background: #E94E77;
+  box-shadow: 0 0 15px rgba(233, 78, 119, 0.9);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

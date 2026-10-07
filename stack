@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# "Lugene" Portfolio - Environment & Docker Stack Manager
+# Usage:
+#   ./stack up       - Launch local development server with Vite HMR (port 5173)
+#   ./stack prod     - Build & run production Nginx container (port 80)
+#   ./stack down     - Stop and remove all running containers
+#   ./stack build    - Rebuild Docker images without cache
+#   ./stack logs     - Stream container logs
+# ==============================================================================
+
+set -e
+
+# Determine project root directory (where docker-compose.yml lives)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "${SCRIPT_DIR}/docker-compose.yml" ]; then
+  PROJECT_ROOT="${SCRIPT_DIR}"
+elif [ -f "${SCRIPT_DIR}/../docker-compose.yml" ]; then
+  PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+else
+  echo "Error: Could not locate docker-compose.yml in current or parent directory."
+  exit 1
+fi
+
+cd "${PROJECT_ROOT}"
+
+COMMAND="${1:-up}"
+
+case "${COMMAND}" in
+  up|dev)
+    echo "🚀 Starting development stack (Vite HMR on http://localhost:5173)..."
+    docker compose up dev
+    ;;
+  prod)
+    echo "🏭 Building and starting production stack (Nginx on http://localhost)..."
+    docker compose up --build prod
+    ;;
+  down|stop)
+    echo "🛑 Stopping all stack containers..."
+    docker compose down
+    ;;
+  build)
+    echo "🔨 Rebuilding stack Docker images..."
+    docker compose build --no-cache
+    ;;
+  logs)
+    echo "📋 Streaming stack logs..."
+    docker compose logs -f
+    ;;
+  *)
+    echo "Usage: ./stack [up|prod|down|build|logs]"
+    echo ""
+    echo "Commands:"
+    echo "  up / dev   : Start dev server with Hot Module Replacement"
+    echo "  prod       : Build & run Nginx production bundle"
+    echo "  down       : Stop all active stack containers"
+    echo "  build      : Rebuild Docker images without cache"
+    echo "  logs       : Stream logs from running containers"
+    exit 1
+    ;;
+esac

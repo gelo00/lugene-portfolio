@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Development Service with Vite Hot Module Replacement (HMR)
+  dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: lugene-portfolio-dev
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_PORT=5173
+    networks:
+      - lugene-network
+
+  # Production Service running Nginx web server with SPA routing
+  prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: lugene-portfolio-prod
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - lugene-network
+
+networks:
+  lugene-network:
+    driver: bridge
