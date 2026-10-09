@@ -198,13 +198,43 @@ const ShowreelPage: React.FC = () => (
   </main>
 );
 
+const NotFoundPage: React.FC = () => (
+  <main className="flex min-h-screen items-center justify-center bg-[#f3f3f1] px-6 text-[#111111]">
+    <div className="flex flex-col items-center text-center">
+      <h1 className="text-2xl font-medium tracking-tight text-[#111111]">
+        This page doesn't exist
+      </h1>
+      <p className="mt-4 max-w-xs text-sm text-[#4b4b4b]">
+        It may have been moved, removed, or never existed.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => window.history.back()}
+        className="mt-6 rounded-md bg-[#111111] px-4 py-2 text-xs font-medium uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
+      >
+        Go back
+      </button>
+
+      <div className="mt-8 text-[10px] uppercase tracking-[0.2em] text-[#777777]">
+        <div>404 not_found</div>
+        <div className="mt-2 text-[9px] tracking-[0.15em] text-[#8b8b8b]">
+          404: /{window.location.pathname.replace(/^\//, '') || 'home'}
+        </div>
+      </div>
+    </div>
+  </main>
+);
+
 export const App: React.FC = () => {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
 
   if (currentPath === '/illustration') return <IllustrationPage />;
   if (currentPath === '/gallery') return <GalleryPage />;
   if (currentPath === '/showreel') return <ShowreelPage />;
-  return <HomePage />;
+  if (currentPath === '/') return <HomePage />;
+
+  return <NotFoundPage />;
 };
 
 export default App;
