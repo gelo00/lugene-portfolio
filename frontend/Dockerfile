@@ -1,4 +1,4 @@
-# Stage 1: Build environment (React + TypeScript + GSAP + Tailwind CSS)
+# Stage 1: Build environment (React 19 + TypeScript + GSAP + R3F + Tailwind)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package dependency definitions
 COPY package*.json ./
 
-# Install dependencies (uses npm ci if package-lock.json exists, otherwise falls back to npm install)
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+# Install dependencies using --legacy-peer-deps to resolve React 19 peer conflicts
+RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
 
 # Copy application source files
 COPY . .

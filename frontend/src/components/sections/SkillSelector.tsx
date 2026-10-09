@@ -118,6 +118,8 @@ export const SkillSelector: React.FC = () => {
     () => {
       if (!containerRef.current) return;
 
+      let entranceDuration = 0;
+      let timelineDuration = 0;
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
@@ -128,7 +130,12 @@ export const SkillSelector: React.FC = () => {
           anticipatePin: 1,
           onUpdate: (self) => {
             if (window.matchMedia('(min-width: 768px)').matches) {
-              const rawIndex = Math.round(self.progress * (SKILLS_DATA.length - 1));
+              const animationProgress = self.progress * timelineDuration;
+              const skillScrollDuration = timelineDuration - entranceDuration;
+              if (animationProgress < entranceDuration || skillScrollDuration <= 0) return;
+
+              const skillProgress = (animationProgress - entranceDuration) / skillScrollDuration;
+              const rawIndex = Math.round(skillProgress * (SKILLS_DATA.length - 1));
               const clampedIndex = Math.min(Math.max(rawIndex, 0), SKILLS_DATA.length - 1);
 
               if (activeIndexRef.current !== clampedIndex) {
@@ -170,6 +177,10 @@ export const SkillSelector: React.FC = () => {
         { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.2)' },
         '-=0.4'
       );
+
+      entranceDuration = tl.duration();
+      tl.to({}, { duration: SKILLS_DATA.length - 1, ease: 'none' });
+      timelineDuration = tl.duration();
     },
     { scope: containerRef }
   );
@@ -216,7 +227,7 @@ export const SkillSelector: React.FC = () => {
       data-scroll-section
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#111111] px-4 py-12 font-sans text-white sm:py-16 md:px-8 md:py-20"
     >
-      <div data-scroll-content className="max-w-6xl w-full mx-auto relative z-10">
+      <div data-scroll-content className="max-w-7xl w-full mx-auto relative z-10">
         {/* Header Title */}
         <div ref={titleRef} className="mb-10 flex justify-center border-b border-neutral-800 pb-6 text-center">
           <div className="w-full">
@@ -227,7 +238,7 @@ export const SkillSelector: React.FC = () => {
         </div>
 
         {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-9 items-start">
           {/* Left Column: Cards 01 - 04 */}
           <div ref={leftGridRef} className="grid grid-cols-2 gap-3 lg:col-span-4">
             {SKILLS_DATA.slice(0, 4).map((skill) => {
@@ -238,7 +249,7 @@ export const SkillSelector: React.FC = () => {
                   key={skill.id}
                   onMouseEnter={() => setActiveSkill(skill)}
                   onClick={() => setActiveSkill(skill)}
-                  className={`w-full p-3 text-left sm:p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
+                  className={`w-full p-4 text-left sm:p-5 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'
@@ -274,7 +285,7 @@ export const SkillSelector: React.FC = () => {
           </div>
 
           {/* Center Column: Dynamic Showcase Card */}
-          <div ref={cardRef} className="lg:col-span-4 bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col">
+          <div ref={cardRef} className="lg:col-span-4 bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-7 shadow-2xl relative overflow-hidden flex flex-col">
             <div className="relative aspect-16/9 rounded-xl overflow-hidden mb-6 border border-neutral-800 bg-neutral-900">
               <img
                 ref={imageRef}
@@ -353,7 +364,7 @@ export const SkillSelector: React.FC = () => {
                   key={skill.id}
                   onMouseEnter={() => setActiveSkill(skill)}
                   onClick={() => setActiveSkill(skill)}
-                  className={`w-full p-3 text-left sm:p-4 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
+                  className={`w-full p-4 text-left sm:p-5 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col items-start justify-between gap-2 group ${
                     isActive
                       ? 'bg-[#1a1a1a] border-[#52C3C1] shadow-[0_0_20px_rgba(82,195,193,0.25)] -translate-x-2'
                       : 'bg-[#141414] border-neutral-800 hover:border-neutral-600 hover:bg-[#1a1a1a]'

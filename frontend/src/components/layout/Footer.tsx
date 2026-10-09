@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
@@ -6,218 +6,227 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-const NAV_ITEMS = [
-  { label: 'ABOUT', targetId: 'about' },
-  { label: 'SKILLS', targetId: 'services' },
-  { label: 'PROJECTS', targetId: 'showcase' },
-];
+export interface FooterProps {
+  initialTheme?: 'teal' | 'dark';
+  email?: string;
+  phone?: string;
+  onNavigate?: (sectionId: string) => void;
+}
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<FooterProps> = ({
+  initialTheme = 'teal',
+  email = 'Lugeneserandoncorp@gmail.com',
+  phone = '+63 0948-703-2740',
+  onNavigate,
+}) => {
   const footerRef = useRef<HTMLElement>(null);
-  const ctaContainerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const textRef = useRef<HTMLParagraphElement>(null);
-  const [activeSection, setActiveSection] = useState('');
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<'teal' | 'dark'>(initialTheme);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const focusY = window.scrollY + window.innerHeight * 0.45;
-      const currentSection = NAV_ITEMS
-        .map(({ targetId }) => document.getElementById(targetId))
-        .filter((section): section is HTMLElement => section !== null)
-        .filter((section) => {
-          const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-          return sectionTop <= focusY && sectionTop + section.offsetHeight > focusY;
-        })
-        .at(-1);
-
-      setActiveSection(currentSection?.id ?? '');
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    gsap.to(window, { duration: 1, scrollTo: 0, ease: 'power2.inOut' });
+  // Copy email helper
+  const handleCopyEmail = () => {
+    const textarea = document.createElement('textarea');
+    textarea.value = email;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text', err);
+    }
+    document.body.removeChild(textarea);
   };
 
-  const scrollToSection = (targetId: string) => {
-    if (targetId === 'showreel') {
-      const showreelTrigger = ScrollTrigger.getById('showreel-transition');
-      if (showreelTrigger) {
-        const videoPosition =
-          showreelTrigger.start + (showreelTrigger.end - showreelTrigger.start) * 0.5;
-        gsap.to(window, {
-          duration: 1.2,
-          scrollTo: { y: videoPosition, autoKill: false },
-          ease: 'power2.inOut',
-        });
-        return;
+  const handleNavClick = (id: string) => {
+    if (onNavigate) {
+      onNavigate(id);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
       }
     }
-
-    document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Parallax Reveal & Stagger Animation
-  useGSAP(() => {
-    if (!footerRef.current || !ctaContainerRef.current) return;
+  useGSAP(
+    () => {
+      if (!footerRef.current) return;
 
-    const revealTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: footerRef.current,
-        start: 'top 85%',
-        end: 'top 20%',
-        scrub: 0.8,
-        toggleActions: 'play reverse play reverse',
-      },
-    });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
 
-    // 1. Teal CTA Banner Unveil & Scale In
-    revealTimeline.fromTo(
-      ctaContainerRef.current,
-      { y: 60, scale: 0.94, opacity: 0 },
-      { y: 0, scale: 1, opacity: 1, duration: 1, ease: 'power3.out' }
-    );
+      if (headingRef.current) {
+        tl.fromTo(
+          headingRef.current,
+          { y: 50, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }
+        );
+      }
 
-    // 2. Heading Stagger
-    if (headingRef.current) {
-      revealTimeline.fromTo(
-        headingRef.current,
-        { y: 30, opacity: 0, scale: 0.92 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.4)' },
-        '-=0.6'
-      );
-    }
+      if (contentRef.current) {
+        tl.fromTo(
+          contentRef.current.children,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, stagger: 0.15, duration: 0.8, ease: 'power2.out' },
+          '-=0.5'
+        );
+      }
+    },
+    { scope: footerRef }
+  );
 
-    // 3. Description Fade In
-    if (textRef.current) {
-      revealTimeline.fromTo(
-        textRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-        '-=0.4'
-      );
-    }
-  }, { scope: footerRef });
+  const isTeal = theme === 'teal';
 
   return (
     <footer
       ref={footerRef}
       id="footer"
-      data-scroll-section
-      className="relative z-10 flex min-h-screen flex-col justify-between overflow-hidden bg-[#0e0e0e] px-4 py-5 text-white select-none sm:px-6 sm:py-6 md:px-12"
+      className={`relative z-10 flex min-h-screen w-full flex-col justify-between px-6 py-10 transition-colors duration-500 select-none sm:px-10 md:px-16 lg:px-20 ${
+        isTeal
+          ? 'bg-[#52C3C1] text-black'
+          : 'bg-[#121212] text-white shadow-inner'
+      }`}
     >
-      {/* Top Header Navigation Indicator Bar */}
-      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-center gap-3 border-b border-white/5 py-4 text-[10px] font-mono tracking-widest text-neutral-400 sm:justify-between sm:gap-4 sm:text-[11px]">
-        <button
-          type="button"
-          onClick={scrollToTop}
-          className="flex cursor-pointer items-center space-x-2"
-          aria-label="Back to top"
-        >
-          <span className="w-2 h-2 rounded-full bg-[#52C3C1] animate-pulse" />
-          <span className="font-bold text-white uppercase">LUGENE</span>
-        </button>
+      {/* Top utility bar / Theme switcher */}
+      <div className="flex w-full items-center justify-between border-b border-black/10 dark:border-white/10 pb-4 text-xs font-mono tracking-widest">
+        <div className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full animate-pulse ${isTeal ? 'bg-black' : 'bg-[#52C3C1]'}`} />
+          <span className="font-bold">LUGENE SERANDON</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setTheme(isTeal ? 'dark' : 'teal')}
+            className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-all border ${
+              isTeal
+                ? 'border-black/30 hover:bg-black hover:text-[#52C3C1]'
+                : 'border-white/30 hover:bg-white hover:text-black'
+            }`}
+          >
+            SWITCH TO {isTeal ? 'DARK' : 'TEAL'} THEME
+          </button>
+        </div>
+      </div>
 
-        <nav aria-label="Section navigation" className="order-3 flex w-full flex-wrap items-center justify-center gap-1 sm:order-none sm:w-auto sm:gap-5">
-          {NAV_ITEMS.map(({ label, targetId }) => {
-            const isActive = activeSection === targetId;
-            return (
+      {/* Main Hero Heading: SAY HELLO */}
+      <div className="my-auto py-12">
+        <h1
+          ref={headingRef}
+          className="w-full text-center font-black tracking-tighter uppercase font-sans text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none drop-shadow-sm select-none"
+        >
+          SAY HELLO
+        </h1>
+
+        {/* Navigation & Contact Details Grid matching reference */}
+        <div
+          ref={contentRef}
+          className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16 max-w-5xl mx-auto"
+        >
+          {/* Column 1: Navigation Links */}
+          <div className="flex flex-col space-y-4 font-sans font-bold tracking-wider text-xl md:text-2xl">
+            <button
+              onClick={() => handleNavClick('projects')}
+              className="text-left hover:opacity-75 transition-opacity cursor-pointer w-fit underline-offset-4 hover:underline"
+            >
+              PROJECTS
+            </button>
+            <a
+              href="/showreel"
+              className="text-left hover:opacity-75 transition-opacity cursor-pointer w-fit underline-offset-4 hover:underline"
+            >
+              SHOWREELS
+            </a>
+            <a
+              href="/illustration"
+              className="text-left hover:opacity-75 transition-opacity cursor-pointer w-fit underline-offset-4 hover:underline"
+            >
+              ILLUSTRATION
+            </a>
+            <a
+              href="/gallery"
+              className="text-left hover:opacity-75 transition-opacity cursor-pointer w-fit underline-offset-4 hover:underline"
+            >
+              GALLERY
+            </a>
+            <button
+              onClick={() => handleNavClick('about')}
+              className="text-left hover:opacity-75 transition-opacity cursor-pointer w-fit underline-offset-4 hover:underline"
+            >
+              ABOUT ME
+            </button>
+          </div>
+
+          {/* Column 2: Contact Details & Copy Actions */}
+          <div className="flex flex-col space-y-6 font-mono text-sm md:text-base">
+            <div>
+              <span className="block font-bold tracking-widest text-xs opacity-60 mb-2 uppercase">
+                DETAILS
+              </span>
               <button
-                key={targetId}
-                type="button"
-                onClick={() => scrollToSection(targetId)}
-                aria-current={isActive ? 'location' : undefined}
-                className={`relative cursor-pointer px-2 py-2 transition-colors hover:text-white ${
-                  isActive ? 'text-[#52C3C1]' : 'text-neutral-400'
-                }`}
+                onClick={handleCopyEmail}
+                className="group flex items-center gap-3 text-left hover:opacity-80 transition-opacity cursor-pointer py-1"
+                title="Click to copy email"
               >
-                {label}
-                <span
-                  className={`absolute inset-x-2 bottom-0 h-px bg-[#52C3C1] transition-transform duration-300 ${
-                    isActive ? 'scale-x-100' : 'scale-x-0'
-                  }`}
-                />
+                <span className={`w-3.5 h-3.5 ${isTeal ? 'bg-black' : 'bg-white'} shrink-0`} />
+                <span className="underline decoration-dotted underline-offset-4 text-xs sm:text-sm">
+                  {copiedEmail ? 'COPIED TO CLIPBOARD!' : email}
+                </span>
               </button>
-            );
-          })}
-        </nav>
+              <div className="flex items-center gap-3 mt-3 py-1">
+                <span className={`w-3.5 h-3.5 ${isTeal ? 'bg-black' : 'bg-white'} shrink-0`} />
+                <span className="text-xs sm:text-sm">{phone}</span>
+              </div>
+            </div>
 
-        <button
-          type="button"
-          onClick={() => scrollToSection('showreel')}
-          className="cursor-pointer rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 transition-all hover:border-[#52C3C1] hover:text-[#52C3C1] uppercase"
-        >
-          PLAY REEL
-        </button>
+            <div>
+              <span className="block font-bold tracking-widest text-xs opacity-60 mb-2 uppercase">
+                PHONE
+              </span>
+              <div className="flex items-center gap-3 py-1">
+                <span className={`w-3.5 h-3.5 ${isTeal ? 'bg-black' : 'bg-white'} shrink-0`} />
+                <span className="text-xs sm:text-sm">{phone}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Main Full-Bleed Teal CTA Banner */}
-      <div
-        ref={ctaContainerRef}
-        className="my-auto mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#52C3C1] px-5 py-10 text-center text-black shadow-2xl relative sm:px-8 sm:py-12 md:px-12 md:py-16"
-      >
-        <div data-scroll-content className="max-w-3xl mx-auto z-10 relative">
-          <h2
-            ref={headingRef}
-            className="mb-5 text-3xl font-black uppercase leading-tight tracking-tight text-neutral-900 font-sans sm:mb-6 sm:text-5xl lg:text-6xl"
-          >
-            LET'S MAKE SOMETHING AWESOME
+      {/* Bottom Branding & Logo Box */}
+      <div className="flex flex-col sm:flex-row w-full items-start sm:items-end justify-between border-t border-black/10 dark:border-white/10 pt-6 gap-6">
+        {/* 3 Square Logo Boxes & Name */}
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center gap-2">
+            <div className={`w-6 h-6 ${isTeal ? 'bg-black shadow-md' : 'bg-neutral-800 border border-neutral-700'}`} />
+            <div className={`w-6 h-6 ${isTeal ? 'bg-black shadow-md' : 'bg-neutral-800 border border-neutral-700'}`} />
+            <div className={`w-6 h-6 ${isTeal ? 'bg-black shadow-md' : 'bg-neutral-800 border border-neutral-700'}`} />
+          </div>
+          <h2 className="font-sans font-black tracking-widest text-lg sm:text-xl uppercase">
+            LUGENE SERANDON
           </h2>
-          <p
-            ref={textRef}
-            className="text-neutral-800 font-sans max-w-xl mx-auto text-sm md:text-base font-semibold leading-relaxed"
-          >
-            Have an upcoming motion graphics project, 3D visual reel, or brand refresh? Let's connect and collaborate.
-          </p>
-        </div>
-      </div>
-
-      {/* Footer Bottom Controls & Metadata */}
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-5 border-t border-white/5 pt-6 text-center text-xs font-mono text-neutral-400 sm:pt-8 md:flex-row md:text-left">
-        
-        {/* Brand Copyright */}
-        <div>
-          <span className="text-[#52C3C1] font-bold font-sans text-sm tracking-wider uppercase">
-            LUGENE
-          </span>
-          <p className="mt-1 text-neutral-500 text-[11px]">
-            © 2026 Lugene Portfolio. All rights reserved.
-          </p>
         </div>
 
-        {/* Social Links */}
-        <div className="flex flex-wrap justify-center gap-6 text-[11px] font-bold tracking-widest sm:gap-8">
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#52C3C1] transition-colors"
+        {/* Back to top or interactive cue */}
+        <div className="flex items-center gap-4 text-xs font-mono">
+          <span className="opacity-60">© 2026 ALL RIGHTS RESERVED</span>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className={`cursor-pointer px-4 py-2 rounded font-bold uppercase transition-transform hover:scale-105 active:scale-95 border ${
+              isTeal
+                ? 'border-black text-black hover:bg-black hover:text-[#52C3C1]'
+                : 'border-white text-white hover:bg-white hover:text-black'
+            }`}
           >
-            LINKEDIN
-          </a>
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#52C3C1] transition-colors"
-          >
-            INSTAGRAM
-          </a>
+            TOP ↑
+          </button>
         </div>
-
-        {/* Back to Top Trigger */}
-        <button
-          onClick={scrollToTop}
-          className="px-4 py-2 border border-neutral-800 hover:border-[#52C3C1] text-white rounded font-mono hover:text-[#52C3C1] transition-all duration-300 flex items-center gap-2 cursor-pointer active:scale-95 text-[11px] font-bold"
-        >
-          <span>BACK TO TOP</span>
-          <span>↑</span>
-        </button>
-
       </div>
     </footer>
   );

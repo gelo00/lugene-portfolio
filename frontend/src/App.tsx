@@ -2,21 +2,43 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 import { Header } from './components/layout/Header';
-import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
 import { Footer } from './components/layout/Footer';
 import SkillSelector from './components/sections/SkillSelector';
 import ShowreelSection from './components/sections/ShowreelSection';
 import { TemporaryLoader } from './components/ui/TemporaryLoader';
-import CustomCursor from './components/ui/CustomCursor';
-import { Showcasev2 } from './components/sections/Showcasev2';
+import Hero from './components/sections/Hero';
+import Showcase from './components/sections/Showcase';
+import Illustration from './components/sections/Illustration';
+import Gallery from './components/sections/Gallery';
 
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const App: React.FC = () => {
+const HomePage: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      autoRaf: false,
+      smoothWheel: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    });
+    const updateScrollTrigger = () => ScrollTrigger.update();
+    const updateLenis = (time: number) => lenis.raf(time * 1000);
+
+    lenis.on('scroll', updateScrollTrigger);
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.off('scroll', updateScrollTrigger);
+      gsap.ticker.remove(updateLenis);
+      lenis.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     const refreshScrollTriggers = () => {
@@ -127,30 +149,62 @@ export const App: React.FC = () => {
 
       <div ref={pageRef} className="relative min-h-screen bg-bg-dark text-text-primary selection:bg-primary selection:text-black font-body overflow-x-hidden">
         {/* Interactive Custom Cursor & Cyberpunk Glow Background */}
-        <CustomCursor/>
+        {/* <CustomCursor/> */}
+            {/* React Three Fiber Interactive 3D Canvas Background */}
+        <Hero/>
         <Header />
-      {/* Main Content Sections */}
-      <main className="relative z-10">
-        {/* Section content transitions are coordinated here for a consistent page flow. */}
-        <Hero />
-        <About />
+        {/* Main Content Sections */}
+        <main className="relative z-10">
+          {/* Section content transitions are coordinated here for a consistent page flow. */}
+          {/* <Hero/> */}
 
-        {/* Services / Capabilities Section */}
-        <SkillSelector />
-        {/* Showcase / Selected Works Portfolio Gallery */}
-        {/* <Showcase /> */}
-        <Showcasev2/>
-  
-        {/* Section 5: Showreel Section (Autoplay On Focus & Chapter Sections) */}
-        <ShowreelSection />
+          <About />
 
-      </main>
+          {/* Services / Capabilities Section */}
+          <SkillSelector />
+
+          {/* <CapturingMoments/> */}
+
+          <Showcase/>
+          {/* Section 5: Showreel Section (Autoplay On Focus & Chapter Sections) */}
+          <ShowreelSection />
+
+        </main>
 
         <Footer />
         {/* <Footerv2/> */}
       </div>
     </>
   );
+};
+
+const IllustrationPage: React.FC = () => (
+  <main className="min-h-screen bg-[#0A0A0A]">
+    <Illustration />
+  </main>
+);
+
+const GalleryPage: React.FC = () => <Gallery />;
+
+const ShowreelPage: React.FC = () => (
+  <main className="relative min-h-screen bg-[#111111]">
+    <a
+      href="/"
+      className="fixed left-6 top-6 z-50 rounded-lg border border-[#00C2A7]/40 bg-black/80 px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider text-[#00C2A7] transition-colors hover:bg-[#00C2A7] hover:text-[#111111]"
+    >
+      ← Home
+    </a>
+    <ShowreelSection />
+  </main>
+);
+
+export const App: React.FC = () => {
+  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+
+  if (currentPath === '/illustration') return <IllustrationPage />;
+  if (currentPath === '/gallery') return <GalleryPage />;
+  if (currentPath === '/showreel') return <ShowreelPage />;
+  return <HomePage />;
 };
 
 export default App;

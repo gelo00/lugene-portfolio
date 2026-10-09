@@ -14,7 +14,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'ABOUT', targetId: 'about' },
   { label: 'SERVICES', targetId: 'services' },
-  { label: 'PROJECTS', targetId: 'showcase' },
+  { label: 'PROJECTS', targetId: 'projects' },
 ];
 
 export const Header: React.FC = () => {
